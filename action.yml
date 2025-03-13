@@ -3,14 +3,14 @@ description: "Run action to create a git tag for your Github repository."
 author: "Filozoff"
 inputs:
   commit-sha:
-    description: "Commit sha (optional). Default: `github.sha` env."
+    description: "Commit sha (optional). Default: `github.sha`."
     default: "${{ github.sha }}"
   tag:
     description: "Tag name."
     required: true
   token:
-    description: "Authorization token. Default: `secrets.GITHUB_TOKEN`."
-    default: "${{ secrets.GITHUB_TOKEN }}"
+    description: "Authorization token. Default: `GITHUB_TOKEN` env."
+    default: "$GITHUB_TOKEN"
 runs:
   using: "composite"
   steps:
