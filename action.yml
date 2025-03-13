@@ -1,5 +1,5 @@
 name: "Make GitHub git tag"
-description: "Run action to create a git tag for your Github repository."
+description: "Run action to create a git tag for your GitHub repository."
 author: "Filozoff"
 inputs:
   commit-sha:

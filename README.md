@@ -6,26 +6,28 @@ A simple GitHub Action that creates and push git tag using GitHub API.
 
 ### Inputs
 
-- `tag`: Derived data path (optional). Default: `./.build`.
-- `token`: GitHub (optional). Default: `GITHUB_TOKEN`.
+- `commit-sha`: Commit sha (optional). Default: `github.sha`.
+- `tag`: Tag name.
+- `token`: Authorization token (optional). Default: `GITHUB_TOKEN` env.
 
 ### Setup
 
 ```yaml
 jobs:
   make-tag:
-    runs-on: linux-latest # You can use any runner with OS which supports sh scripts
+    runs-on: linux-latest
     steps:
       - name: Make tag
         uses: Filozoff/action-make-tag@v1
         with:
+          commit-sha: ${{ github.sha }}
           tag: "1.1.2"
           token: "..."
 ```
 
 ## Limitations
 
-- Only works with runners which supports sh scripts
+- None
 
 ## License
 
