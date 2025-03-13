@@ -1,0 +1,46 @@
+name: "Make GitHub git tag"
+description: "Run action to create a git tag for your Github repository."
+author: "Filozoff"
+inputs:
+  commit-sha:
+    description: "Commit sha (optional). Default: `github.sha` env."
+    default: "${{ github.sha }}"
+  tag:
+    description: "Tag name."
+    required: true
+  token:
+    description: "Authorization token. Default: `secrets.GITHUB_TOKEN`."
+    default: "${{ secrets.GITHUB_TOKEN }}"
+runs:
+  using: "composite"
+  steps:
+    - name: Check inputs
+      if: ${{ inputs.tag == '' }}
+      shell: bash
+      run: |
+        echo "::error title=⛔ Missing inputs::'tag' is not set."
+        exit 1
+
+    - name: POST tag
+      id: post-tag
+      shell: bash
+      run: |
+        api_tag_url="$GITHUB_API_URL/repos/$GITHUB_REPOSITORY/git/refs"
+        payload=$(jq -cn \
+          --arg ref "refs/tags/${{ inputs.tag }}" \
+          --arg sha "${{ inputs.commit-sha }}" \
+          '{$ref, $sha}'
+        )
+        api_response=$(curl -s "$api_tag_url" \
+          -X POST \
+          -H "Authorization: token ${{ inputs.token }}" \
+          -d "$payload"
+        )
+        echo "$api_response"
+
+        has_succeeded=$(echo "$api_response" | jq 'has("ref")')
+
+        if [[ "$has_succeeded" = false ]]; then
+          echo "::error title=⛔ Push error:: Status $(echo $api_response | jq .status). $(echo $api_response | jq .message)"
+          exit 1
+        fi
